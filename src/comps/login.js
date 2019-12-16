@@ -1,14 +1,69 @@
 import React, { useState } from "react";
 
-import { Input } from "react-native-elements";
+import { Input, Button } from "react-native-elements";
+import { View, StyleSheet } from "react-native";
+import MyHeader from "./header.js";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import { gql } from "apollo-boost";
 
-const LoginForm = () => {
+const LOGINQUERY = gql`
+  mutation LoginMutation($userLogin: UserLogin!) {
+    login(input: $userLogin) {
+      token
+      user {
+        id
+        username
+      }
+    }
+  }
+`;
+
+const LoginForm = props => {
+  const [creds, setCreds] = useState({ username: "", password: "" });
+  const [loginQuery] = useMutation(LOGINQUERY);
+
+  const handleUsernameInput = text => {
+    setCreds({ ...creds, username: text });
+  };
+
+  const handlePasswordInput = text => {
+    setCreds({ ...creds, password: text });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const returned = await loginQuery({
+        variables: {
+          userLogin: { username: creds.username, password: creds.password }
+        }
+      });
+      console.log(returned);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
-      <Input placeholder="Username" />
-      <Input placeholder="Password" />
+      <MyHeader
+        phrase="This is a test"
+        pageChange={props.navigation.navigate}
+      />
+      <View style={styles.innerContainer}>
+        <Input placeholder="Username" onChangeText={handleUsernameInput} />
+        <Input placeholder="Password" onChangeText={handlePasswordInput} />
+      </View>
+      <View style={styles.innerContainer}>
+        <Button title="Submit" onPress={handleSubmit} />
+      </View>
     </>
   );
 };
 
 export default LoginForm;
+
+const styles = StyleSheet.create({
+  innerContainer: {
+    margin: 30
+  }
+});
