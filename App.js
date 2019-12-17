@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AppNavigator from "./src/comps/homeScreen.js";
 import { ApolloClient, HttpLink, InMemoryCache } from "apollo-boost";
 import { ApolloProvider } from "@apollo/react-hooks";
@@ -11,9 +11,14 @@ const client = new ApolloClient({
 });
 
 const App = () => {
+  const [jwt, setJwt] = useState("");
+  const setJwtLogin = jwt => {
+    setJwt(jwt);
+  };
+
   return (
     <ApolloProvider client={client}>
-      <AppNavigator />
+      <AppNavigator screenProps={{ setJwtLogin: setJwtLogin, jwt: jwt }} />
     </ApolloProvider>
   );
 };

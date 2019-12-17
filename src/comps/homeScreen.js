@@ -15,25 +15,24 @@ const theme = {
   }
 };
 
-const testQuery = gql`
-  {
-    users {
-      id
-      username
-    }
-  }
-`;
-
-const testingFunc = () => {
-  const { loading, error, data } = useQuery(testQuery);
-  if (loading) console.log("Loading");
-  if (error) console.log("Error");
-
-  console.log(data);
-};
+// const testQuery = gql`
+//   {
+//     users {
+//       id
+//       username
+//     }
+//   }
+// `;
+//
+// const testingFunc = () => {
+//   const { loading, error, data } = useQuery(testQuery);
+//   if (loading) console.log("Loading");
+//   if (error) console.log("Error");
+//
+//   console.log(data);
+// };
 
 const HomeScreen = props => {
-  testingFunc();
   return (
     <ThemeProvider theme={theme}>
       <MyHeader

@@ -5,6 +5,7 @@ import { View, StyleSheet } from "react-native";
 import MyHeader from "./header.js";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
+import { AsyncStorage } from "react-native";
 
 const LOGINQUERY = gql`
   mutation LoginMutation($userLogin: UserLogin!) {
@@ -18,6 +19,14 @@ const LOGINQUERY = gql`
   }
 `;
 
+const saveJwt = async (key, value) => {
+  try {
+    await AsyncStorage.setItem(key, value);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const LoginForm = props => {
   const [creds, setCreds] = useState({ username: "", password: "" });
   const [loginQuery] = useMutation(LOGINQUERY);
@@ -30,14 +39,17 @@ const LoginForm = props => {
     setCreds({ ...creds, password: text });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async e => {
+    e.preventDefault();
     try {
       const returned = await loginQuery({
         variables: {
           userLogin: { username: creds.username, password: creds.password }
         }
       });
-      console.log(returned);
+      const token = returned.data.login.token;
+      saveJwt("token", token);
+      props.screenProps.setJwtLogin(token);
     } catch (err) {
       console.log(err);
     }
