@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, ThemeProvider, Text } from "react-native-elements";
 import MyHeader from "./header.js";
 import MessagesScreen from "./messScreen.js";
@@ -15,23 +15,6 @@ const theme = {
   }
 };
 
-// const testQuery = gql`
-//   {
-//     users {
-//       id
-//       username
-//     }
-//   }
-// `;
-//
-// const testingFunc = () => {
-//   const { loading, error, data } = useQuery(testQuery);
-//   if (loading) console.log("Loading");
-//   if (error) console.log("Error");
-//
-//   console.log(data);
-// };
-
 const HomeScreen = props => {
   return (
     <ThemeProvider theme={theme}>
@@ -40,6 +23,7 @@ const HomeScreen = props => {
         pageChange={props.navigation.navigate}
       />
       <Text>The Tracking App</Text>
+      <Button title="Test" />
     </ThemeProvider>
   );
 };

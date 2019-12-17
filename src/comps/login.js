@@ -49,6 +49,7 @@ const LoginForm = props => {
       });
       const token = returned.data.login.token;
       saveJwt("token", token);
+      console.log(token);
       props.screenProps.setJwtLogin(token);
     } catch (err) {
       console.log(err);
