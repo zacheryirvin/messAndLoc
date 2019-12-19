@@ -22,36 +22,41 @@ const getJwt = async key => {
   }
 };
 
-const authLink = setContext(async (_, { headers }) => {
-  const token = await getJwt("token");
-  console.log(token);
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : ""
-    }
-  };
-});
-
-const link = authLink.concat(httpLink);
-
-const client = new ApolloClient({
-  link: link,
-  cache: new InMemoryCache()
-});
-
 const App = () => {
-  const [jwt, setJwt] = useState("");
-  useEffect(() => {
-    setJwtLogin(getJwt("token"));
-  }, []);
+  const [jwt, setJwt] = useState({
+    token: "",
+    user: ""
+  });
+
+  const authLink = setContext(async (_, { headers }) => {
+    const token = await getJwt("token");
+    return {
+      headers: {
+        ...headers,
+        authorization: token ? `Bearer ${token}` : ""
+      }
+    };
+  });
+
+  const link = authLink.concat(httpLink);
+
+  const client = new ApolloClient({
+    link: link,
+    cache: new InMemoryCache()
+  });
+
   const setJwtLogin = jwt => {
     setJwt(jwt);
   };
 
   return (
     <ApolloProvider client={client}>
-      <AppNavigator screenProps={{ setJwtLogin: setJwtLogin, jwt: jwt }} />
+      <AppNavigator
+        screenProps={{
+          setJwtLogin: setJwtLogin,
+          jwt: jwt
+        }}
+      />
     </ApolloProvider>
   );
 };

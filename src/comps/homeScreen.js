@@ -15,17 +15,56 @@ const theme = {
   }
 };
 
+const LOGGEDIN = gql`
+  {
+    user {
+      username
+    }
+  }
+`;
+
 const HomeScreen = props => {
-  return (
-    <ThemeProvider theme={theme}>
-      <MyHeader
-        phrase="This is a test"
-        pageChange={props.navigation.navigate}
-      />
-      <Text>The Tracking App</Text>
-      <Button title="Test" />
-    </ThemeProvider>
-  );
+  const { loading, error, data } = useQuery(LOGGEDIN);
+  useEffect(() => {}, [data]);
+  if (error) {
+    // console.log(error.graphQLErrors);
+    return (
+      <>
+        <MyHeader
+          phrase="This is a test"
+          pageChange={props.navigation.navigate}
+        />
+        <Text>{error.graphQLErrors[0].message}</Text>
+        <Text>Please Login</Text>
+      </>
+    );
+  }
+  if (loading) {
+    // console.log("loading");
+    return (
+      <>
+        <Text>Loading...</Text>
+      </>
+    );
+  }
+  if (data) {
+    if (props.screenProps.jwt.username !== data.user.username) {
+      props.screenProps.setJwtLogin({
+        ...props.screenProps.jwt,
+        username: data.user.username
+      });
+    }
+    return (
+      <ThemeProvider theme={theme}>
+        <MyHeader
+          phrase="This is a test"
+          pageChange={props.navigation.navigate}
+          screenProps={props.screenProps}
+        />
+        <Text>Welcome {props.screenProps.jwt.username}</Text>
+      </ThemeProvider>
+    );
+  }
 };
 
 const AppNavigator = createStackNavigator(

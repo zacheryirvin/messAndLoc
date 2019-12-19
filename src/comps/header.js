@@ -6,17 +6,29 @@ import {
   View,
   StyleSheet,
   Button,
-  Modal
+  Modal,
+  AsyncStorage
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faBars,
   faSignInAlt,
+  faSignOutAlt,
   faWindowClose
 } from "@fortawesome/free-solid-svg-icons";
 
 const MyHeader = props => {
   const [showMenu, setShowMenu] = useState(false);
+
+  const signout = async () => {
+    try {
+      await AsyncStorage.removeItem("token");
+      props.screenProps.setJwtLogin({ token: "", username: "" });
+      props.pageChange("Login");
+    } catch (err) {
+      console.log(error);
+    }
+  };
   const LeftHeader = () => {
     return (
       <>
@@ -30,6 +42,17 @@ const MyHeader = props => {
   };
 
   const RightHeader = () => {
+    if (props.screenProps) {
+      return (
+        <>
+          <TouchableHighlight onPress={signout}>
+            <View>
+              <FontAwesomeIcon style={{ color: "#fff" }} icon={faSignOutAlt} />
+            </View>
+          </TouchableHighlight>
+        </>
+      );
+    }
     return (
       <>
         <TouchableHighlight onPress={() => props.pageChange("Login")}>

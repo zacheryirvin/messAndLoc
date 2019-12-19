@@ -14,6 +14,7 @@ const LOGINQUERY = gql`
       user {
         id
         username
+        conversations
       }
     }
   }
@@ -48,9 +49,11 @@ const LoginForm = props => {
         }
       });
       const token = returned.data.login.token;
+      const user = returned.data.login.user;
+      console.log(user);
       saveJwt("token", token);
-      console.log(token);
-      props.screenProps.setJwtLogin(token);
+      props.screenProps.setJwtLogin({ token: token, user: user });
+      props.navigation.navigate("Home");
     } catch (err) {
       console.log(err);
     }
@@ -64,7 +67,12 @@ const LoginForm = props => {
       />
       <View style={styles.innerContainer}>
         <Input placeholder="Username" onChangeText={handleUsernameInput} />
-        <Input placeholder="Password" onChangeText={handlePasswordInput} />
+        <Input
+          placeholder="Password"
+          textContentType="password"
+          secureTextEntry
+          onChangeText={handlePasswordInput}
+        />
       </View>
       <View style={styles.innerContainer}>
         <Button title="Submit" onPress={handleSubmit} />
