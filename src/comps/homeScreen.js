@@ -4,6 +4,7 @@ import MyHeader from "./header.js";
 import MessagesScreen from "./messScreen.js";
 import MapScreen from "./map.js";
 import LoginForm from "./login.js";
+import ConversationScreen from "./conversationScreen.js";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { useQuery } from "@apollo/react-hooks";
@@ -18,7 +19,9 @@ const theme = {
 const LOGGEDIN = gql`
   {
     user {
+      id
       username
+      conversations
     }
   }
 `;
@@ -48,10 +51,10 @@ const HomeScreen = props => {
     );
   }
   if (data) {
-    if (props.screenProps.jwt.username !== data.user.username) {
+    if (props.screenProps.jwt.user.username !== data.user.username) {
       props.screenProps.setJwtLogin({
         ...props.screenProps.jwt,
-        username: data.user.username
+        user: data.user
       });
     }
     return (
@@ -61,7 +64,7 @@ const HomeScreen = props => {
           pageChange={props.navigation.navigate}
           screenProps={props.screenProps}
         />
-        <Text>Welcome {props.screenProps.jwt.username}</Text>
+        <Text>Welcome {props.screenProps.jwt.user.username}</Text>
       </ThemeProvider>
     );
   }
@@ -72,7 +75,8 @@ const AppNavigator = createStackNavigator(
     Home: HomeScreen,
     Messages: MessagesScreen,
     Map: MapScreen,
-    Login: LoginForm
+    Login: LoginForm,
+    Conversation: ConversationScreen
   },
   {
     initialRouteName: "Home"

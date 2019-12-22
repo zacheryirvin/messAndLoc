@@ -17,6 +17,7 @@
     "apollo-client": "^2.6.8",
     "apollo-link-context": "^1.0.19",
     "apollo-link-http": "^1.5.16",
+    "apollo-link-ws": "^1.0.19",
     "expo": "~35.0.0",
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
@@ -31,7 +32,8 @@
     "react-native-svg": "^9.13.5",
     "react-native-web": "~0.11.7",
     "react-navigation": "^4.0.10",
-    "react-navigation-stack": "^1.10.3"
+    "react-navigation-stack": "^1.10.3",
+    "subscriptions-transport-ws": "^0.9.16"
   },
   "devDependencies": {
     "babel-preset-expo": "~8.0.0"

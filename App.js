@@ -7,12 +7,15 @@ import { createHttpLink } from "apollo-link-http";
 import { setContext } from "apollo-link-context";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { HttpLink } from "apollo-boost";
-import { gql } from "apollo-boost";
-import { useQuery } from "@apollo/react-hooks";
+import { WebSocketLink } from "apollo-link-ws";
+import { split } from "apollo-link";
+import { getMainDefinition } from "apollo-utilities";
 
 const httpLink = new HttpLink({
-  uri: "https://zachsgraphqldb.herokuapp.com/"
+  // uri: "https://zachsgraphqldb.herokuapp.com/"
+  uri: "http://localhost:8000/"
 });
+
 const getJwt = async key => {
   try {
     const token = await AsyncStorage.getItem(key);
@@ -27,6 +30,27 @@ const App = () => {
     token: "",
     user: ""
   });
+  const token = getJwt("token");
+  token.then(data => {
+    if (jwt.token !== data) {
+      console.log("ran");
+      setJwt({ ...jwt, token: data });
+    }
+  });
+
+  const wsLink = new WebSocketLink({
+    // uri: "ws://zachsgraphqldb.herokuapp.com/",
+    uri: "ws://localhost:8000/",
+    options: {
+      reconnect: true,
+      timeout: 20000,
+      lazy: true,
+      connectionParams: {
+        authToken: jwt.token
+      }
+    }
+  });
+  console.log(wsLink);
 
   const authLink = setContext(async (_, { headers }) => {
     const token = await getJwt("token");
@@ -38,7 +62,18 @@ const App = () => {
     };
   });
 
-  const link = authLink.concat(httpLink);
+  const link = split(
+    ({ query }) => {
+      const definition = getMainDefinition(query);
+      console.log(definition);
+      return (
+        definition.kind === "OperationDefinition" &&
+        definition.operation === "subscription"
+      );
+    },
+    authLink.concat(httpLink),
+    authLink.concat(httpLink)
+  );
 
   const client = new ApolloClient({
     link: link,

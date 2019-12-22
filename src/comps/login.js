@@ -50,7 +50,6 @@ const LoginForm = props => {
       });
       const token = returned.data.login.token;
       const user = returned.data.login.user;
-      console.log(user);
       saveJwt("token", token);
       props.screenProps.setJwtLogin({ token: token, user: user });
       props.navigation.navigate("Home");
