@@ -37,7 +37,6 @@ const HomeScreen = props => {
           phrase="This is a test"
           pageChange={props.navigation.navigate}
         />
-        <Text>{error.graphQLErrors[0].message}</Text>
         <Text>Please Login</Text>
       </>
     );
